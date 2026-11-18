@@ -1,7 +1,26 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { MulticaClient } from "../src/multica";
 
 describe("MulticaClient", () => {
+  it("binds the default fetch to globalThis for Workers compatibility", async () => {
+    const workerFetch = function (this: typeof globalThis, _input: RequestInfo | URL, _init?: RequestInit) {
+      expect(this).toBe(globalThis);
+      return Promise.resolve(Response.json({ ok: true }));
+    };
+    vi.stubGlobal("fetch", workerFetch);
+
+    try {
+      const client = new MulticaClient(
+        { MULTICA_API_URL: "https://multica.example" },
+        { token: "secret", workspaceId: "workspace-1" },
+      );
+
+      await expect(client.getAgent("agent-1")).resolves.toEqual({ ok: true });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it("uses the workspace query and bearer token for list requests", async () => {
     let seen: Request | undefined;
     const client = new MulticaClient(

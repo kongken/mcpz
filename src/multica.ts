@@ -24,7 +24,7 @@ export class MulticaClient {
   constructor(
     private readonly env: Env,
     private readonly credentials: MulticaCredentials,
-    private readonly fetcher: typeof fetch = fetch,
+    private readonly fetcher: typeof fetch = globalThis.fetch.bind(globalThis),
   ) {}
 
   async request<T = unknown>(
