@@ -26,7 +26,7 @@ export class MulticaClient {
     init: RequestInit = {},
     query: Record<string, unknown> = {},
   ): Promise<T> {
-    const url = new URL(path, this.env.MULTICA_API_URL || DEFAULT_API_URL);
+    const url = new URL(path, this.env.MULTICA_SERVER_URL || this.env.MULTICA_API_URL || DEFAULT_API_URL);
     for (const [key, value] of Object.entries(query)) {
       if (value !== undefined && value !== "") url.searchParams.set(key, Array.isArray(value) ? value.join(",") : String(value));
     }

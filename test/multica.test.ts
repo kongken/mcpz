@@ -21,6 +21,23 @@ describe("MulticaClient", () => {
     expect(seen?.headers.get("authorization")).toBe("Bearer secret");
   });
 
+  it("prefers the self-hosted server URL override", async () => {
+    let seen: Request | undefined;
+    const client = new MulticaClient(
+      {
+        MULTICA_API_URL: "https://api.multica.ai",
+        MULTICA_SERVER_URL: "https://multica.internal.example/",
+      },
+      async (input, init) => {
+        seen = new Request(input, init);
+        return Response.json({});
+      },
+    );
+
+    await client.getAgent("agent-1");
+    expect(seen?.url).toBe("https://multica.internal.example/api/agents/agent-1");
+  });
+
   it("sends issue creation as JSON without invoking a local process", async () => {
     let seen: Request | undefined;
     const client = new MulticaClient(

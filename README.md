@@ -14,7 +14,8 @@ npx wrangler secret put MULTICA_API_TOKEN
 npm run dev
 ```
 
-可选环境变量：`MULTICA_API_URL`（默认 `https://api.multica.ai`）、
+可选环境变量：`MULTICA_SERVER_URL`（self-host 优先，覆盖默认的
+`https://api.multica.ai`；`MULTICA_API_URL` 仍作为兼容别名）、
 `MULTICA_WORKSPACE_ID` 和 `MCP_ACCESS_TOKEN`。设置 `MCP_ACCESS_TOKEN` 后，
 连接 `/mcp` 的客户端必须发送对应的 `Authorization: Bearer ...`。
 

@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local Wrangler development and fill in real values.
+MULTICA_SERVER_URL=https://api.multica.ai
+MULTICA_WORKSPACE_ID=workspace-uuid
+MULTICA_API_TOKEN=replace-me
+MCP_ACCESS_TOKEN=replace-me

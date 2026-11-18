@@ -59,7 +59,7 @@ Cloudflare 官方 `mcp-server` 示例使用 `@modelcontextprotocol/server` 的 `
 
 ## 认证、配置与部署
 
-- 使用 Cloudflare Worker secrets 保存 `MULTICA_API_TOKEN`；将 `MULTICA_API_URL` 和默认 workspace 作为环境变量，开发/生产分别配置。
+- 使用 Cloudflare Worker secrets 保存 `MULTICA_API_TOKEN`；将 `MULTICA_SERVER_URL`（self-host 地址，默认 `https://api.multica.ai`）和默认 workspace 作为环境变量，开发/生产分别配置。`MULTICA_API_URL` 作为兼容别名保留。
 - MCP 客户端是第三方调用者时，按 MCP 授权规范接入 OAuth 2.1；Cloudflare 的 `workers-oauth-provider` 可以负责 token endpoint 和验证，tool handler 仍需自行检查 scope。
 - 如果只是内部单租户服务，可以先用固定 Bearer token 或 Cloudflare Access，之后再升级 OAuth；不要把 Multica 长期 token 放在客户端。
 - `wrangler.jsonc` 至少声明 Worker entrypoint、compatibility date、环境变量和（有状态方案才需要的）Durable Object binding/migration。
