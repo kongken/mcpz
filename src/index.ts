@@ -3,7 +3,9 @@ import type { Env } from "./env";
 import { MulticaClient } from "./multica";
 import { registerTools } from "./tools";
 
-const MCP_PATH = "/mcp";
+// Keep each MCP under its own path so this Worker can host additional MCP
+// servers later without competing for the generic `/mcp` endpoint.
+export const MCP_PATH = "/mcp/multica";
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {

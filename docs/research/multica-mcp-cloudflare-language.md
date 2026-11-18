@@ -30,7 +30,7 @@
 
 ```mermaid
 flowchart LR
-  C[MCP client] -->|Streamable HTTP /mcp| W[Cloudflare Worker]
+  C[MCP client] -->|Streamable HTTP /mcp/multica| W[Cloudflare Worker]
   W --> A[认证与 scope 检查]
   A --> H[MCP handler\nTypeScript SDK]
   H --> M[Multica HTTP adapter\nfetch + timeout]
@@ -38,7 +38,7 @@ flowchart LR
   W -.需要持久会话时.-> D[Durable Object]
 ```
 
-1. Worker 在 `/mcp` 暴露 MCP Streamable HTTP。使用官方 handler 处理 JSON-RPC、内容协商、协议版本和错误格式，不自行复制 transport 细节。
+1. Worker 在 `/mcp/multica` 暴露 MCP Streamable HTTP。使用官方 handler 处理 JSON-RPC、内容协商、协议版本和错误格式，不自行复制 transport 细节。将每个 MCP 放在独立路径下，后续可以在同一个 Worker 增加其他 MCP。
 2. 每个 tool handler 只做参数校验、权限检查和 Multica API 调用；不要把原始 token、完整认证上下文或内部错误写回 MCP 内容。
 3. Multica adapter 统一处理 base URL、Bearer token、workspace header、超时和错误映射。读请求可以有限重试，写请求必须依赖幂等键或不重试。
 4. 只读无状态服务可直接每请求创建 MCP server。若要支持会话恢复、事件重放或订阅，再用 Durable Object 保存 session/event store。
