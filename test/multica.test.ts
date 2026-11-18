@@ -7,9 +7,8 @@ describe("MulticaClient", () => {
     const client = new MulticaClient(
       {
         MULTICA_API_URL: "https://multica.example",
-        MULTICA_API_TOKEN: "secret",
-        MULTICA_WORKSPACE_ID: "workspace-1",
       },
+      { token: "secret", workspaceId: "workspace-1" },
       async (input, init) => {
         seen = new Request(input, init);
         return Response.json([{ id: "agent-1" }]);
@@ -28,6 +27,7 @@ describe("MulticaClient", () => {
         MULTICA_API_URL: "https://api.multica.ai",
         MULTICA_SERVER_URL: "https://multica.internal.example/",
       },
+      { token: "secret", workspaceId: "workspace-1" },
       async (input, init) => {
         seen = new Request(input, init);
         return Response.json({});
@@ -41,7 +41,8 @@ describe("MulticaClient", () => {
   it("sends issue creation as JSON without invoking a local process", async () => {
     let seen: Request | undefined;
     const client = new MulticaClient(
-      { MULTICA_API_URL: "https://multica.example", MULTICA_WORKSPACE_ID: "workspace-1" },
+      { MULTICA_API_URL: "https://multica.example" },
+      { token: "secret", workspaceId: "workspace-1" },
       async (input, init) => {
         seen = new Request(input, init);
         return Response.json({ id: "issue-1" });
@@ -56,6 +57,7 @@ describe("MulticaClient", () => {
   it("bounds upstream error details", async () => {
     const client = new MulticaClient(
       { MULTICA_API_URL: "https://multica.example" },
+      { token: "secret", workspaceId: "workspace-1" },
       async () => new Response(JSON.stringify({ error: "upstream failed" }), { status: 502 }),
     );
 

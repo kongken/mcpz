@@ -15,9 +15,15 @@ export class MulticaApiError extends Error {
 
 export type JsonObject = Record<string, unknown>;
 
+export interface MulticaCredentials {
+  token: string;
+  workspaceId: string;
+}
+
 export class MulticaClient {
   constructor(
     private readonly env: Env,
+    private readonly credentials: MulticaCredentials,
     private readonly fetcher: typeof fetch = fetch,
   ) {}
 
@@ -34,7 +40,7 @@ export class MulticaClient {
     const headers = new Headers(init.headers);
     headers.set("accept", "application/json");
     if (init.body !== undefined) headers.set("content-type", "application/json");
-    if (this.env.MULTICA_API_TOKEN) headers.set("authorization", `Bearer ${this.env.MULTICA_API_TOKEN}`);
+    headers.set("authorization", `Bearer ${this.credentials.token}`);
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -69,7 +75,7 @@ export class MulticaClient {
   }
 
   private workspaceQuery(extra: Record<string, unknown> = {}) {
-    return { ...extra, workspace_id: this.env.MULTICA_WORKSPACE_ID };
+    return { ...extra, workspace_id: this.credentials.workspaceId };
   }
 
   listAgents(includeArchived = false) {
@@ -81,7 +87,7 @@ export class MulticaClient {
   }
 
   createAgent(input: JsonObject) {
-    return this.request("/api/agents", json("POST", { ...input, workspace_id: this.env.MULTICA_WORKSPACE_ID }));
+    return this.request("/api/agents", json("POST", { ...input, workspace_id: this.credentials.workspaceId }));
   }
 
   updateAgent(agentId: string, input: JsonObject) {
@@ -105,7 +111,7 @@ export class MulticaClient {
   }
 
   createIssue(input: JsonObject) {
-    return this.request("/api/issues", json("POST", { ...input, workspace_id: this.env.MULTICA_WORKSPACE_ID }));
+    return this.request("/api/issues", json("POST", { ...input, workspace_id: this.credentials.workspaceId }));
   }
 
   updateIssue(issueId: string, input: JsonObject) {
