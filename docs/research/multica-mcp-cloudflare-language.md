@@ -65,6 +65,16 @@ Cloudflare 官方 `mcp-server` 示例使用 `@modelcontextprotocol/server` 的 `
 - `wrangler.jsonc` 至少声明 Worker entrypoint、compatibility date、环境变量和（有状态方案才需要的）Durable Object binding/migration。
 - 生产请求需要 CORS、请求体大小限制、上游超时、结构化日志和 token 脱敏。Multica 上游错误应转换为可诊断但不泄露凭据的 MCP tool error。
 
+## 容器部署
+
+除 Worker 外，同一个 MCP handler 也通过 Node HTTP 适配器（`src/server.ts`）打包成容器，供 self-host 或非 Cloudflare 环境使用：
+
+- `npm run build` 用 esbuild 把 `src/server.ts` 打成单文件 `dist/server.mjs`，运行时不依赖 `node_modules`。
+- `Dockerfile` 基于 `node:22-alpine` 多阶段构建，构建阶段执行 typecheck、测试和打包，运行阶段只保留 bundle，以非 root 用户运行并提供 `/healthz` 健康检查。
+- `.github/workflows/docker.yml` 在 `main`、`v*` tag 和手动触发时构建多架构镜像并推送到 `ghcr.io/kongken/mcpz`。
+
+容器形态不改变认证契约：Multica token 与 workspace 仍来自请求 header，服务端环境变量只配置 API 地址。
+
 ## 验证计划
 
 在实现阶段加入以下检查：

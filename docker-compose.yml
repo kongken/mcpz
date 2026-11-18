@@ -1,0 +1,10 @@
+# Example: run the published image locally or on a self-hosted host.
+services:
+  mcpz:
+    image: ghcr.io/kongken/mcpz:latest
+    ports:
+      - "8787:8787"
+    environment:
+      # Root URL of the Multica instance to call. Omit to use the default cloud API.
+      MULTICA_SERVER_URL: https://api.multica.ai
+    restart: unless-stopped
